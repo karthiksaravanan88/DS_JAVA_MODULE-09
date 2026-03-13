@@ -1,71 +1,134 @@
-# Ex19 Palindrome Check Using Deque
+# Ex18 Simulation of a Ticket Counter Using Queue (Linked List Implementation)
 ## DATE: 03-10-2026
 ## AIM:
-To design a program that checks whether a given message is a palindrome by removing all non-alphanumeric characters, converting all characters to lowercase, and using a deque data structure for comparison.
-
+To simulate the functioning of a ticket counter that operates on a First-In-First-Out (FIFO) basis using a queue implemented via a linked list in Java.
 ## Algorithm
-1. Read the input string and keep only alphanumeric characters, converting them to lowercase to form a cleaned string.
-2. Create a deque and insert all characters of the cleaned string into it.
-3. While the deque has more than one character, remove one from the front and one from the rear.
-4. Compare the two removed characters; if they differ, return false because it is not a palindrome.
-5. If all comparisons match, return true and print “Palindrome”; otherwise print “Not a palindrome.”
+1. Initialize an empty queue with front and rear pointers set to null.
+2. For enqueue, create a new node; if the queue is empty, set both front and rear to it, otherwise link it to the end and update rear.
+3. For dequeue, check if the queue is empty; if not, print and remove the front element, and update rear to null if the queue becomes empty.
+4. For display, traverse from front to rear and print each customer name in order.
+5. Continuously read commands (enqueue, dequeue, display, exit) and perform the corresponding queue operations.
 
 ## Program:
 ```JAVA
 /*
-Program to checks whether a given message is a palindrome by removing all non-alphanumeric characters.
+Program to functioning of a ticket counter that operates on a First-In-First-Out (FIFO)
 Developed by: karthik
 RegisterNumber: 212224230118
 */
-import java.util.*;
+import java.util.Scanner;
 
-public class PalindromeChecker {
-    
-    public static boolean isPalindrome(String message) {
-        //Type code here...
-        StringBuilder cleaned = new StringBuilder();
-        for (char c : message.toCharArray()) {
-            if (Character.isLetterOrDigit(c)) {
-                cleaned.append(Character.toLowerCase(c));
-            }
-        }
+class Node {
+    String customerName;
+    Node next;
 
-        // Step 2: Use a deque to check palindrome
-        Deque<Character> deque = new LinkedList<>();
-        for (char c : cleaned.toString().toCharArray()) {
-            deque.addLast(c);
-        }
+    public Node(String name) {
+        this.customerName = name;
+        this.next = null;
+    }
+}
 
-        // Step 3: Compare front and rear characters
-        while (deque.size() > 1) {
-            if (deque.removeFirst() != deque.removeLast()) {
-                return false;
-            }
-        }
+class TicketQueue {
+    private Node front;
+    private Node rear;
 
-        return true;
+    public TicketQueue() {
+        this.front = this.rear = null;
     }
 
+    public void enqueue(String customerName) {
+        //Type code here...
+        Node newNode = new Node(customerName);
+        if (rear == null) {
+            front = rear = newNode;
+            return;
+        }
+        rear.next = newNode;
+        rear = newNode;
+    }
+
+    public void dequeue() {
+        //Type code here...
+        if (front == null) {
+            System.out.println("Queue is empty. No customer to serve.");
+            return;
+        }
+        System.out.println("Serving customer: " + front.customerName);
+        front = front.next;
+        if (front == null) {
+            rear = null;
+        }
+    }
+
+    public void displayQueue() {
+        //Type code here...
+        if (front == null) {
+            System.out.println("Queue is empty.");
+            return;
+        }
+        System.out.print("Queue: ");
+        Node temp = front;
+        while (temp != null) {
+            System.out.print(temp.customerName);
+            if (temp.next != null) System.out.print(" -> ");
+            temp = temp.next;
+        }
+        System.out.println();
+    }
+}
+
+public class TicketCounter {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+        TicketQueue queue = new TicketQueue();
+        String command;
+        
+        while (true) {
 
-        if (isPalindrome(input)) {
-            System.out.println("Palindrome");
-        } else {
-            System.out.println("Not a palindrome");
+            // Fix for NoSuchElementException
+            if (!scanner.hasNextLine()) {
+                //System.out.println("No more input. Exiting simulation.");
+                break;
+            }
+
+            command = scanner.nextLine().trim();
+            if (command.isEmpty()) continue;
+
+            String[] parts = command.split(" ");
+
+            switch (parts[0]) {
+                case "enqueue":
+                    if (parts.length >= 2) {
+                        queue.enqueue(parts[1]);
+                    } else {
+                        System.out.println("Please provide a customer name.");
+                    }
+                    break;
+                case "dequeue":
+                    queue.dequeue();
+                    break;
+                case "display":
+                    queue.displayQueue();
+                    break;
+                case "exit":
+                    System.out.println("Exiting simulation.");
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Invalid command.");
+            }
         }
 
-        scanner.close();
+        scanner.close(); // Safe close
     }
 }
 
 ```
 
 ## Output:
-<img width="1267" height="318" alt="image" src="https://github.com/user-attachments/assets/6e7527fd-49be-430c-a111-5bc63f896c34" />
+<img width="1322" height="709" alt="image" src="https://github.com/user-attachments/assets/f40f832b-87d0-48de-a57d-e8345b2818da" />
 
 
 
 ## Result:
-The program successfully removes all non-alphanumeric characters, converts the text to lowercase, and uses a deque to efficiently compare characters from both ends. Hence, it determines whether the string is a palindrome.
+Thus, the program successfully simulates a ticket counter queue where customers are served in FIFO order using a linked list-based queue implementation.
